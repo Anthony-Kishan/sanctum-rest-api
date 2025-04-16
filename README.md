@@ -1,61 +1,272 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Laravel Sanctum User Management API
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A complete RESTful API solution for user management with token-based authentication using Laravel Sanctum. This project includes user registration, authentication, password reset with OTP verification via email, and full CRUD operations for user management.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **User Authentication**
+  - Registration with email verification
+  - Login with token-based authentication using Laravel Sanctum
+  - Secure logout functionality
+  - User profile access
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Password Management**
+  - Forgot password flow with OTP (One-Time Password)
+  - OTP verification via email
+  - Secure password reset
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **User Management**
+  - List all users (paginated)
+  - Create new users
+  - View user details
+  - Update user information
+  - Delete users
 
-## Learning Laravel
+## API Endpoints
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Authentication
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Method | Endpoint | Description | Authentication Required |
+|--------|----------|-------------|------------------------|
+| POST | `/api/register` | Register a new user | No |
+| POST | `/api/login` | Login and get access token | No |
+| POST | `/api/logout` | Logout and invalidate token | Yes |
+| GET | `/api/user` | Get authenticated user data | Yes |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Password Reset
 
-## Laravel Sponsors
+| Method | Endpoint | Description | Authentication Required |
+|--------|----------|-------------|------------------------|
+| POST | `/api/forgot-password` | Request password reset OTP | No |
+| POST | `/api/verify-otp` | Verify OTP and get reset token | No |
+| POST | `/api/reset-password` | Reset password using token | No |
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### User Management
 
-### Premium Partners
+| Method | Endpoint | Description | Authentication Required |
+|--------|----------|-------------|------------------------|
+| GET | `/api/users` | List all users (paginated) | Yes |
+| POST | `/api/users` | Create a new user | Yes |
+| GET | `/api/users/{id}` | Get specific user details | Yes |
+| PUT/PATCH | `/api/users/{id}` | Update user information | Yes |
+| DELETE | `/api/users/{id}` | Delete a user | Yes |
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+## Request & Response Examples
+
+### Register
+
+**Request:**
+```http
+POST /api/register
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "password123",
+  "password_confirmation": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "User registered successfully",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "created_at": "2025-04-17T10:00:00.000000Z",
+    "updated_at": "2025-04-17T10:00:00.000000Z"
+  },
+  "token": "1|a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+}
+```
+
+### Login
+
+**Request:**
+```http
+POST /api/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Login successful",
+  "user": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "created_at": "2025-04-17T10:00:00.000000Z",
+    "updated_at": "2025-04-17T10:00:00.000000Z"
+  },
+  "token": "1|a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+}
+```
+
+### Forgot Password
+
+**Request:**
+```http
+POST /api/forgot-password
+Content-Type: application/json
+
+{
+  "email": "john@example.com"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Password reset OTP has been sent to your email"
+}
+```
+
+### Verify OTP
+
+**Request:**
+```http
+POST /api/verify-otp
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "otp": "123456"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "OTP verified successfully",
+  "reset_token": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6"
+}
+```
+
+### Reset Password
+
+**Request:**
+```http
+POST /api/reset-password
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "reset_token": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+  "password": "newpassword123",
+  "password_confirmation": "newpassword123"
+}
+```
+
+**Response:**
+```json
+{
+  "status": "success",
+  "message": "Password has been reset successfully"
+}
+```
+
+## Installation
+
+1. Clone this repository:
+```bash
+git clone https://github.com/Anthony-Kishan/sanctum-rest-api.git
+cd sanctum-rest-api
+```
+
+2. Install dependencies:
+```bash
+composer install
+```
+
+3. Copy environment file and configure:
+```bash
+cp .env.example .env
+```
+
+4. Generate application key:
+```bash
+php artisan key:generate
+```
+
+5. Configure your database in the `.env` file:
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+```
+
+6. Configure mail settings for OTP emails:
+```
+MAIL_MAILER=smtp
+MAIL_HOST=your-smtp-host
+MAIL_PORT=your-smtp-port
+MAIL_USERNAME=your-username
+MAIL_PASSWORD=your-password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your-email@example.com
+MAIL_FROM_NAME="${APP_NAME}"
+```
+
+7. Run migrations:
+```bash
+php artisan migrate
+```
+
+8. Install Sanctum:
+```bash
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+```
+
+## Usage
+
+### Making Authenticated Requests
+
+To access protected endpoints, include the token in the `Authorization` header:
+
+```
+Authorization: Bearer 1|a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6
+```
+
+### CORS Configuration
+
+If you're accessing the API from a different domain, make sure to configure CORS in `config/cors.php`:
+
+```php
+'paths' => ['api/*', 'sanctum/csrf-cookie'],
+'supports_credentials' => true,
+```
+
+## Security Considerations
+
+- OTPs expire after 30 minutes
+- Password reset tokens are single-use
+- All existing tokens are revoked after password reset
+- Password must be at least 8 characters long
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License - see the LICENSE file for details.
